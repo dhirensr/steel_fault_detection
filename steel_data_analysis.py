@@ -3,10 +3,11 @@ import sklearn as sk
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv('/home/dhirensr/Desktop/steel_data.csv')
+df = pd.read_csv(os.getcwd()+'/steel_data.csv')
 
 sns.countplot(x="Class", data= df)
 
