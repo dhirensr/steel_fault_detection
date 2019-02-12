@@ -92,12 +92,12 @@ def heatmap_knn(rate):
               [Input('rate', 'value')])
 def bar_randomforest_test(rate):
     return html.Div([dcc.Graph(
-        id='graph-2-tabs',
+        id='graph-3-tabs',
         figure={
             'data': [{
                 'y':  steel_data_analysis.RandomForest(rate)[2],
                 'x': ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
-                
+
                 'type': 'bar',
                 "name" : "Test Results"
             }]
@@ -109,22 +109,23 @@ def bar_randomforest_test(rate):
               [Input('rate', 'value')])
 def bar_randomforest_predicted(rate):
     return html.Div([dcc.Graph(
-        id='graph-2-tabs',
+        id='graph-4-tabs',
         figure={
             'data': [{
                 'y':  steel_data_analysis.RandomForest(rate)[3],
                 'x': ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
-                
+
                 'type': 'bar',
                 "name" : "Predicted Results"
             }]
         }
     )])
+
 @app.callback(Output('TR_KNN', 'children'),
               [Input('rate', 'value')])
 def bar_knn_test(rate):
     return html.Div([dcc.Graph(
-        id='graph-2-tabs',
+        id='graph-5-tabs',
         figure={
             'data': [{
                 'y':  steel_data_analysis.Kneighbors(rate)[2],
@@ -140,7 +141,7 @@ def bar_knn_test(rate):
               [Input('rate', 'value')])
 def bar_knn_predicted(rate):
     return html.Div([dcc.Graph(
-        id='graph-2-tabs',
+        id='graph-6-tabs',
         figure={
             'data': [{
                 'y':  steel_data_analysis.Kneighbors(rate)[3],
@@ -150,7 +151,7 @@ def bar_knn_predicted(rate):
             }]
         }
     )])
-  
+
 @app.callback(Output('amount-per-week', 'children'),
               [Input('rate', 'value')])
 def compute_amount(rate):
