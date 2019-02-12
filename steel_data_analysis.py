@@ -51,6 +51,7 @@ def RandomForest(estimators=10):
     y_predicted_df=pd.DataFrame(y_predicted,columns=y_test.columns)
     cnf_matrix = get_cnf_matrix(y_test,y_predicted_df)
     test_count,predicted_count=get_bar_data(y_test,y_predicted_df)
+    
     return cnf_matrix,sk.metrics.accuracy_score(y_test,y_predicted),test_count,predicted_count
 
     #plt.bar(x=y_pos,height=imp_features,width=0.8)
@@ -75,11 +76,14 @@ def get_bar_data(y_test,y_predicted_df):
     count=0
     for i in range(28,35):
         index='V'+str(i)
-        test_class=y_test[y_test[[index]]==1].sum()
-        cl_count_test[classes[index]]= test_class[index]
+        test_class=(y_test[index]==1).sum() #y_test[y_test[[index]]==1].sum()
+    
+        cl_count_test[classes[index]]= test_class
         
         predicted_class=y_predicted_df[y_predicted_df[[index]]==1].sum()
         cl_count_predicted[classes[index]]= predicted_class[index]
-        test_count,predicted_count=get_bar_data(y_test,y_predicted_df)
         
-    return cl_count_test.values(),cl_count_predicted.values(),test_count,predicted_count
+        
+    return list(cl_count_test.values()),list(cl_count_predicted.values())
+
+#print(RandomForest(1))
