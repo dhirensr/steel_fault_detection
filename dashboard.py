@@ -19,6 +19,7 @@ html.Label('K neighbors'),
 html.Label('RandomForestClassifier Accuracy'),
     html.Div(id='amount'),
 
+
 html.Label('KNN Accuracy'),
     html.Div(id='amount-per-week'),
 html.H3('Heatmap-RandomForestClassifier'),
@@ -26,45 +27,38 @@ html.H3('Heatmap-RandomForestClassifier'),
 html.H3('Heatmap- KNN Confusion'),
     html.Div(id='confusion_matrix_1'),
 
-html.H3('Prediction for P1'),
-    dcc.Graph(
-        id='graph-2-tabs',
-        figure={
-            'data': [{
-                'x': [1,2,3],
-                'y': [4,5,7],
-                'type': 'scatter',
-                "name" : "temperature"
-            }]
-        }
-    ),
+###################
+html.Label('Test_Results-RandomForestClassifier Bar'),
+    html.Div(id='TR_RF'),
+html.Label('Predicted_Results-RandomForestClassifier Bar'),
+    html.Div(id='PR_RF'),
 
-html.H3('Prediction for P1'),
-    dcc.Graph(
-                id='graph-3-tabs',
-                figure={
-                    'data': [{
-                        'x': [1,2,3],
-                        'y': [4,5,7],
-                        'type': 'scatter',
-                        "name" : "temperature"
-                    }]
-                }
-            )])
+
+
+html.Label('Test_Results-KNN Bar'),
+    html.Div(id='TR_KNN'),
+html.Label('Predicted_Results-KNN Bar'),
+    html.Div(id='PR_KNN')
+
+######################
+
+
+
+])
 
 @app.callback(Output('amount', 'children'),
               [Input('hours', 'value')])
 def compute_amount(hours):
     return steel_data_analysis.RandomForest(hours)[1]
 
-@app.callback(Output('confusion_matrix_1', 'children'),
+@app.callback(Output('confusion_matrix', 'children'),
               [Input('rate', 'value')])
 def heatmap_randomforest(rate):
     return html.Div([dcc.Graph(
         id='graph-1-tabs',
         figure={
             'data': [{
-                'z':  steel_data_analysis.Kneighbors(rate)[0],
+                'z':  steel_data_analysis.RandomForest(rate)[0],
                 'text': [
                     ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
                     ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults']
@@ -75,7 +69,7 @@ def heatmap_randomforest(rate):
         }
     )])
 
-@app.callback(Output('confusion_matrix', 'children'),
+@app.callback(Output('confusion_matrix_1', 'children'),
               [Input('rate', 'value')])
 def heatmap_knn(rate):
     return html.Div([dcc.Graph(
@@ -93,6 +87,78 @@ def heatmap_knn(rate):
         }
     )])
 
+
+@app.callback(Output('TR_RF', 'children'),
+              [Input('rate', 'value')])
+def bar_randomforest_test(rate):
+    return html.Div([dcc.Graph(
+        id='graph-2-tabs',
+        figure={
+            'data': [{
+                'y':  steel_data_analysis.RandomForest(rate)[2],
+                'x': ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
+                
+                'type': 'bar',
+                "name" : "Test Results"
+            }]
+        }
+    )])
+
+
+@app.callback(Output('PR_RF', 'children'),
+              [Input('rate', 'value')])
+def bar_randomforest_predicted(rate):
+    return html.Div([dcc.Graph(
+        id='graph-2-tabs',
+        figure={
+            'data': [{
+                'z':  steel_data_analysis.RandomForest(rate)[3],
+                'text': [
+                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
+                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults']
+                ],
+                'type': 'bar',
+                "name" : "Predicted Results"
+            }]
+        }
+    )])
+@app.callback(Output('TR_KNN', 'children'),
+              [Input('rate', 'value')])
+def bar_knn_test(rate):
+    return html.Div([dcc.Graph(
+        id='graph-2-tabs',
+        figure={
+            'data': [{
+                'z':  steel_data_analysis.Kneighbors(rate)[2],
+                'text': [
+                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
+                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults']
+                ],
+                'type': 'bar',
+                "name" : "Test Results"
+            }]
+        }
+    )])
+
+
+@app.callback(Output('PR_KNN', 'children'),
+              [Input('rate', 'value')])
+def bar_knn_predicted(rate):
+    return html.Div([dcc.Graph(
+        id='graph-2-tabs',
+        figure={
+            'data': [{
+                'z':  steel_data_analysis.Kneighbors(rate)[3],
+                'text': [
+                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
+                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults']
+                ],
+                'type': 'bar',
+                "name" : "Predicted Results"
+            }]
+        }
+    )])
+  
 @app.callback(Output('amount-per-week', 'children'),
               [Input('rate', 'value')])
 def compute_amount(rate):
