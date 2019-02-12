@@ -80,10 +80,10 @@ def get_bar_data(y_test,y_predicted_df):
     
         cl_count_test[classes[index]]= test_class
         
-        predicted_class=y_predicted_df[y_predicted_df[[index]]==1].sum()
-        cl_count_predicted[classes[index]]= predicted_class[index]
+        predicted_class=(y_predicted_df[index]==1).sum()
+        cl_count_predicted[classes[index]]= predicted_class
         
         
     return list(cl_count_test.values()),list(cl_count_predicted.values())
 
-#print(RandomForest(1))
+print(RandomForest(1))
