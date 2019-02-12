@@ -18,14 +18,8 @@ sns.countplot(x="Class", data= df)
 
 
 
-df_class1 = df[df.Class==1]
-df_class2 = df[df.Class==2]
-df_class2_upsampled = sk.utils.resample(df_class2,
-                                        replace=True,
-                                        n_samples=1268)
-df = pd.concat([df_class1, df_class2_upsampled])
-print(len(df))
-sns.countplot(x="Class", data= df)
+#print(len(df))
+#sns.countplot(x="Class", data= df)
 
 df.loc[df['Class'] == 1, 'V34'] = 0
 df.loc[df['Class'] == 2, 'V34'] = 1
@@ -50,7 +44,7 @@ def RandomForest(estimators=10):
     imp_feature_names=X_train.columns[:27]
 
     y_pos=np.arange(len(imp_feature_names))
-    
+
     y_predicted_df=pd.DataFrame(y_predicted,columns=y_test.columns)
     cnf_matrix = sk.metrics.confusion_matrix(y_test.values.argmax(axis=1), y_predicted_df.values.argmax(axis=1))
     return cnf_matrix,sk.metrics.accuracy_score(y_test,y_predicted)
@@ -63,7 +57,7 @@ def Kneighbors(k=10):
     clf= KNeighborsClassifier(n_neighbors=k)
     clf.fit(X_train,y_train)
     y_predicted=clf.predict(X_test)
-    print("Accuracy_Score=",sk.metrics.accuracy_score(y_test,y_predicted))
+    #print("Accuracy_Score=",sk.metrics.accuracy_score(y_test,y_predicted))
     y_predicted_df=pd.DataFrame(y_predicted,columns=y_test.columns)
     cnf_matrix = sk.metrics.confusion_matrix(y_test.values.argmax(axis=1), y_predicted_df.values.argmax(axis=1))
     return cnf_matrix,sk.metrics.accuracy_score(y_test,y_predicted)
