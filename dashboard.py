@@ -77,7 +77,7 @@ def heatmap_randomforest(rate):
 
 @app.callback(Output('confusion_matrix', 'children'),
               [Input('rate', 'value')])
-def heatmap_randomforest(rate):
+def heatmap_knn(rate):
     return html.Div([dcc.Graph(
         id='graph-2-tabs',
         figure={
