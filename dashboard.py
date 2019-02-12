@@ -22,9 +22,9 @@ html.Label('RandomForestClassifier Accuracy'),
 
 html.Label('KNN Accuracy'),
     html.Div(id='amount-per-week'),
-html.H3('Heatmap-RandomForestClassifier'),
+html.Label('Heatmap-RandomForestClassifier'),
     html.Div(id='confusion_matrix'),
-html.H3('Heatmap- KNN Confusion'),
+html.Label('Heatmap- KNN Confusion'),
     html.Div(id='confusion_matrix_1'),
 
 ###################
@@ -112,11 +112,9 @@ def bar_randomforest_predicted(rate):
         id='graph-2-tabs',
         figure={
             'data': [{
-                'z':  steel_data_analysis.RandomForest(rate)[3],
-                'text': [
-                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
-                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults']
-                ],
+                'y':  steel_data_analysis.RandomForest(rate)[3],
+                'x': ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
+                
                 'type': 'bar',
                 "name" : "Predicted Results"
             }]
@@ -129,11 +127,8 @@ def bar_knn_test(rate):
         id='graph-2-tabs',
         figure={
             'data': [{
-                'z':  steel_data_analysis.Kneighbors(rate)[2],
-                'text': [
-                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
-                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults']
-                ],
+                'y':  steel_data_analysis.Kneighbors(rate)[2],
+                'x': ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
                 'type': 'bar',
                 "name" : "Test Results"
             }]
@@ -148,11 +143,8 @@ def bar_knn_predicted(rate):
         id='graph-2-tabs',
         figure={
             'data': [{
-                'z':  steel_data_analysis.Kneighbors(rate)[3],
-                'text': [
-                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
-                    ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults']
-                ],
+                'y':  steel_data_analysis.Kneighbors(rate)[3],
+                'x': ['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
                 'type': 'bar',
                 "name" : "Predicted Results"
             }]
