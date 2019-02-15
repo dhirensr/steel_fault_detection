@@ -17,10 +17,10 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
     html.Label('Random Forest Estimators'),
-    dcc.Slider(id='hours', value=5, min=0, max=24, step=1),
+    dcc.Slider(id='hours', value=5, min=0, max=50, step=1),
 
 html.Label('K neighbors'),
-    dcc.Slider(id='rate', value=5, min=0, max=24, step=1),
+    dcc.Slider(id='rate', value=5, min=0, max=27, step=1),
 
 html.Div(id='amount-dummy'),
 html.Div(id='amount_dummy'),
@@ -57,7 +57,8 @@ html.Label('Select Attributes'),
         {'label': 'SigmoidOfAreas', 'value': 'V27'}
 
     ],
-    values=['V1', 'V2']
+    values=['V1', 'V2'],
+    labelStyle={'display': 'inline-block'}
     ),
 html.Label('RandomForestClassifier Accuracy'),
     html.Div(id='amount'),
@@ -65,7 +66,10 @@ html.Label('RandomForestClassifier Accuracy'),
 html.Label('KNN Accuracy'),
     html.Div(id='amount-per-week'),
 html.Label('Heatmap-RandomForestClassifier'),
+html.Label('Y-Axis: Predicted Results'),
+html.Label('X-Axis: Predicted Results'),
     html.Div(id='confusion_matrix'),
+
     html.Label('Heatmap- KNN Confusion'),
     html.Div(id='confusion_matrix_1'),
 
@@ -93,14 +97,14 @@ html.Label('Predicted_Results-KNN Bar'),
 def compute_amount(attributes,hours):
     global cnf,accuracy,test_count,pred_count
     cnf,accuracy,test_count,pred_count=steel_data_analysis.RandomForest(attributes,hours)
-    return ""
+    return "Number of estimators= "+str(hours)
 
 @app.callback(Output('amount_dummy', 'children'),
               [Input('attributes', 'values'),Input('rate', 'value')])
 def compute_amount(attributes,rate):
     global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn
     cnf_knn,accuracy_knn,test_count_knn,pred_count_knn=steel_data_analysis.Kneighbors(attributes,rate)
-    return ""
+    return "Number of Neighbours= "+str(rate)
 
 
 @app.callback(Output('amount-per-week', 'children'),
