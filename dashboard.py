@@ -7,8 +7,8 @@ import dash_core_components as dcc
 import steel_data_analysis
 import datetime
 
-cnf,accuracy,test_count,pred_count=[[0,0]],0,[0,0,0],[0,0,0]
-cnf_knn,accuracy_knn,test_count_knn,pred_count_knn=[[0,0]],0,[0,0,0],[0,0,0]
+cnf,accuracy,test_count,pred_count,mse=[[0,0]],0,[0,0,0],[0,0,0],0
+cnf_knn,accuracy_knn,test_count_knn,pred_count_knn,mse_knn=[[0,0]],0,[0,0,0],[0,0,0],0
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -16,17 +16,18 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
+    html.H2('Prototype',style={'text-align':'center'}),
     html.Label('Random Forest Estimators'),
     dcc.Slider(id='hours', value=5, min=0, max=50, step=1),
 
-html.Label('K neighbors'),
-    dcc.Slider(id='rate', value=5, min=0, max=27, step=1),
-
+html.Label('K neighbors',),
+    dcc.Slider(id='rate', value=5, min=0, max=27, step=1,),
+#html.Div(id='dummy_line',),
 html.Div(id='amount-dummy'),
-html.Div(id='amount_dummy'),
+html.Div(id='amount_dummy',style={'line-height':80}),
 
 html.Label('Select Attributes'),
-    dcc.Checklist(id='attributes',
+    dcc.Dropdown(id='attributes',
     options=[
         {'label': 'X_Minimum', 'value': 'V1'},
         {'label': 'X_Maximum', 'value': 'V2'},
@@ -57,34 +58,49 @@ html.Label('Select Attributes'),
         {'label': 'SigmoidOfAreas', 'value': 'V27'}
 
     ],
-    values=['V1', 'V2'],
-    labelStyle={'display': 'inline-block'}
+    multi=True,
+    value=['V1','V2','V3','V4','V5','V6','V7','V8','V9','V10','V11',
+    'V12','V13','V14','V15','V16','V17','V18','V19','V20',
+    'V21','V22','V23','V24','V25','V26','V27'],#['V1', 'V2'],
+    #labelStyle={'display': 'inline-block'},style={'line-height':80},
     ),
-html.Label('RandomForestClassifier Accuracy'),
-    html.Div(id='amount'),
+html.Label('RandomForestClassifier Accuracy',style={'text-align':'center','font-weight':'bold'}),
+    html.Div(id='amount',style={'text-align':'center',}),
 
-html.Label('KNN Accuracy'),
-    html.Div(id='amount-per-week'),
-html.Label('Heatmap-RandomForestClassifier'),
+html.Label('KNN Accuracy',style={'text-align':'center','font-weight':'bold'}),
+    html.Div(id='amount-per-week',style={'text-align':'center'}),
+html.Label('RandomForestClassifier MSE',style={'text-align':'center','font-weight':'bold'}),
+    html.Div(id='rf_mse',style={'text-align':'center',}),
+
+html.Label('KNN MSE',style={'text-align':'center','font-weight':'bold'}),
+    html.Div(id='knn_mse',style={'text-align':'center'}),
+
+html.H3('Visualizations',style={'text-align':'center','font-weight':'bold'}),
 html.Label('Y-Axis: Predicted Results'),
-html.Label('X-Axis: Predicted Results'),
-    html.Div(id='confusion_matrix'),
+html.Label('X-Axis: Predicted Results',style={'line-height':80}),
 
-    html.Label('Heatmap- KNN Confusion'),
-    html.Div(id='confusion_matrix_1'),
+html.Label('Heatmap-RandomForestClassifier',style={'margin-left':100,'display': 'inline-block'}),
+html.Label('Heatmap- KNN Confusion',style={'margin-left':400,'display': 'inline-block'}),
+    html.Div([html.Div(id='confusion_matrix_1'),
+        html.Div(id='confusion_matrix'),],className="row") ,
+
+    
+    
 
 ###################
-html.Label('Test_Results-RandomForestClassifier Bar'),
-    html.Div(id='TR_RF'),
-html.Label('Predicted_Results-RandomForestClassifier Bar'),
-    html.Div(id='PR_RF'),
+html.Label('Test_Results-RandomForestClassifier Bar',style={'margin-left':75,'display': 'inline-block'}),
+html.Label('Predicted_Results-RandomForestClassifier Bar',style={'margin-left':300,'display': 'inline-block'}),
+    html.Div([html.Div(id='TR_RF'),html.Div(id='PR_RF'),],className="row"),
+
+    
 
 
 
-html.Label('Test_Results-KNN Bar'),
-    html.Div(id='TR_KNN'),
-html.Label('Predicted_Results-KNN Bar'),
-    html.Div(id='PR_KNN')
+html.Label('Test_Results-KNN Bar',style={'margin-left':100,'display': 'inline-block'}),
+html.Label('Predicted_Results-KNN Bar',style={'margin-left':400,'display': 'inline-block'}),
+    html.Div([html.Div(id='TR_KNN'),html.Div(id='PR_KNN'),],className="row"),
+
+    
 
 ######################
 
@@ -92,37 +108,53 @@ html.Label('Predicted_Results-KNN Bar'),
 
 ])
 
+
+app.css.append_css({
+    'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
+})
+
 @app.callback(Output('amount-dummy', 'children'),
-              [Input('attributes', 'values'),Input('hours', 'value')])
+              [Input('attributes', 'value'),Input('hours', 'value')])
 def compute_amount(attributes,hours):
-    global cnf,accuracy,test_count,pred_count
-    cnf,accuracy,test_count,pred_count=steel_data_analysis.RandomForest(attributes,hours)
+    global cnf,accuracy,test_count,pred_count,mse
+    cnf,accuracy,test_count,pred_count,mse=steel_data_analysis.RandomForest(attributes,hours)
     return "Number of estimators= "+str(hours)
 
 @app.callback(Output('amount_dummy', 'children'),
-              [Input('attributes', 'values'),Input('rate', 'value')])
+              [Input('attributes', 'value'),Input('rate', 'value')])
 def compute_amount(attributes,rate):
-    global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn
-    cnf_knn,accuracy_knn,test_count_knn,pred_count_knn=steel_data_analysis.Kneighbors(attributes,rate)
+    global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn,mse_knn
+    cnf_knn,accuracy_knn,test_count_knn,pred_count_knn,mse_knn=steel_data_analysis.Kneighbors(attributes,rate)
     return "Number of Neighbours= "+str(rate)
 
 
 @app.callback(Output('amount-per-week', 'children'),
-              [Input('attributes', 'values'),Input('rate', 'value')])
+              [Input('attributes', 'value'),Input('rate', 'value')])
 def compute_amount(attributes,rate):
     global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn
-    return accuracy_knn
+    return accuracy_knn*100
 
 @app.callback(Output('amount', 'children'),
-              [Input('attributes', 'values'),Input('hours', 'value')])
+              [Input('attributes', 'value'),Input('hours', 'value')])
 def compute_amount(attributes,hours):
     global cnf,accuracy,test_count,pred_count
-    return accuracy
+    return accuracy*100
 
+@app.callback(Output('knn_mse', 'children'),
+              [Input('attributes', 'value'),Input('rate', 'value')])
+def compute_amount(attributes,rate):
+    global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn,mse_knn
+    return mse_knn
+
+@app.callback(Output('rf_mse', 'children'),
+              [Input('attributes', 'value'),Input('hours', 'value')])
+def compute_amount(attributes,hours):
+    global cnf,accuracy,test_count,pred_count,mse
+    return mse
 
 
 @app.callback(Output('confusion_matrix', 'children'),
-              [Input('attributes', 'values'),Input('hours', 'value')])
+              [Input('attributes', 'value'),Input('hours', 'value')])
 def heatmap_randomforest(attributes,hours):
     global cnf,accuracy,test_count,pred_count
     return html.Div([dcc.Graph(
@@ -134,12 +166,13 @@ def heatmap_randomforest(attributes,hours):
                 'y' :['Pastry', 'Z-scratch', 'K_Scratch',"Stains",'Dirtiness','Bumps','Other_faults'],
                 'type': 'heatmap',
                 "name" : "temperature"
-            }]
+            }
+            ]
         }
-    )])
+    )],className="six columns",)
 
 @app.callback(Output('confusion_matrix_1', 'children'),
-              [Input('attributes', 'values'),Input('rate', 'value')])
+              [Input('attributes', 'value'),Input('rate', 'value')])
 def heatmap_knn(attributes,rate):
     global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn
     return html.Div([dcc.Graph(
@@ -153,11 +186,11 @@ def heatmap_knn(attributes,rate):
                 "name" : "temperature-1"
             }]
         }
-    )])
+    )],className="six columns")
 
 
 @app.callback(Output('TR_RF', 'children'),
-              [Input('attributes', 'values'),Input('hours', 'value')])
+              [Input('attributes', 'value'),Input('hours', 'value')])
 def bar_randomforest_test(attributes,rate):
     global cnf,accuracy,test_count,pred_count
     return html.Div([dcc.Graph(
@@ -171,11 +204,11 @@ def bar_randomforest_test(attributes,rate):
                 "name" : "Test Results"
             }]
         }
-    )])
+    )],className="six columns")
 
 
 @app.callback(Output('PR_RF', 'children'),
-              [Input('attributes', 'values'),Input('hours', 'value')])
+              [Input('attributes', 'value'),Input('hours', 'value')])
 def bar_randomforest_predicted(attributes,rate):
     global cnf,accuracy,test_count,pred_count
     return html.Div([dcc.Graph(
@@ -189,10 +222,10 @@ def bar_randomforest_predicted(attributes,rate):
                 "name" : "Test Results"
             }]
         }
-    )])
+    )],className="six columns")
 
 @app.callback(Output('TR_KNN', 'children'),
-              [Input('attributes', 'values'),Input('rate', 'value')])
+              [Input('attributes', 'value'),Input('rate', 'value')])
 def bar_knn_test(attributes,rate):
     global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn
     return html.Div([dcc.Graph(
@@ -205,12 +238,13 @@ def bar_knn_test(attributes,rate):
                 "name" : "Test Results"
             }]
         }
-    )])
+    )],className="six columns")
 
 
 @app.callback(Output('PR_KNN', 'children'),
-              [Input('attributes', 'values'),Input('rate', 'value')])
+              [Input('attributes', 'value'),Input('rate', 'value')])
 def bar_knn_predicted(attributes,rate):
+    
     global cnf_knn,accuracy_knn,test_count_knn,pred_count_knn
     return html.Div([dcc.Graph(
         id='graph-6-tabs',
@@ -222,7 +256,7 @@ def bar_knn_predicted(attributes,rate):
                 "name" : "Predicted Results"
             }]
         }
-    )])
+    )],className="six columns")
 
 
 if __name__ == '__main__':
